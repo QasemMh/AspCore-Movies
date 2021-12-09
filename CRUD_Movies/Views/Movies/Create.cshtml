@@ -1,0 +1,98 @@
+﻿@model MovieFormViewModel
+@{
+    ViewData["Title"] = "Create Movie";
+}
+
+<h2>Create Movie</h2>
+<hr />
+<section class="row justify-content-between overflow-hidden pb-4">
+    <div class="col-md-6">
+        <form method="post" asp-action="Create">
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input type="text" asp-for="Name" maxlength="250" class="form-control" required />
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GenreId"></label>
+                <select class="form-control" asp-for="GenreId" required
+                        asp-items="@(new SelectList(Model.Genres,"Id","Name"))">
+                    <option disabled selected>---Select Category---</option>
+                </select>
+                <span class="text-danger" asp-validation-for="GenreId"></span>
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="Year"></label>
+                <input type="number" asp-for="Year" value="" class="form-control" required />
+                <span class="text-danger" asp-validation-for="Year"></span>
+            </div>
+            <div class="form-group w-50">
+                <label asp-for="Rate"></label>
+                <input type="number" asp-for="Rate" max="10" min="0" class="form-control" required />
+                <span class="text-danger" asp-validation-for="Rate"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StoryLine"></label>
+                <textarea class="form-control" asp-for="StoryLine" maxlength="2500" rows="4" required>
+                </textarea>
+                <span class="text-danger" asp-validation-for="StoryLine"></span>
+            </div>
+            <div class="custom-file form-group">
+                <input type="file"
+                       accept="image/*"
+                       asp-for="Image"
+                       id="ImagePath"
+                       onchange="previewImage(this)"
+                       class="custom-file-input"
+                       required>
+                <label class="custom-file-label" style="text-align:left" id="img_txt"
+                       asp-for="Image">
+                    Choose Image
+                </label>
+            </div>
+            <div class="mt-4">
+                <button class="btn btn-primary" type="submit"><i class="bi bi-check"></i> Create</button>
+                <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-x"></i> Cancel</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group img-container">
+            <img src="~/image/@Model.ImagePath"
+                 alt="photo"
+                 class="profile-img"
+                 loading="lazy"
+                 id="image_src"
+                 asp-append-version="true" />
+        </div>
+    </div>
+
+
+</section>
+
+
+
+@section Scripts {
+
+    <script>
+
+        function previewImage(e) {
+            let image = window.URL.createObjectURL(e.files[0]);
+            document.querySelector('#image_src').src = image;
+            document.querySelector('#img_txt').innerHTML = `${e.files[0].name} | ${image.length}Bytes`;
+        }
+
+        $('#Year').datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years", autoclose: true,
+            startDate: new Date("1950-01-01"),
+            endDate: new Date()
+
+        });
+    </script>
+
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}
